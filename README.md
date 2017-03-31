@@ -375,5 +375,51 @@ vector<int> nextGreaterElement(vector<int>& findNums, vector<int>& nums) {
 ### 别人写法
 
 ```
+class Solution {
+public:
+ vector<int> nextGreaterElement(vector<int>& findNums, vector<int>& nums) {
+		unordered_map<int, int> mark;
+		deque<int> next;
+		for (auto i : nums){
+			while (!next.empty() && i > next.back()){
+				mark[next.back()] = i;
+				next.pop_back();
+			}
+			next.push_back(i);
+		}
+		vector<int >res;
+		for (auto i : findNums){
+			if (mark.find(i) != mark.end()){
+				res.push_back(mark[i]);
+			}
+			else{
+				res.push_back(-1);
+			}
+		}
+		return res;
+	}
+};
 
+
+class Solution {
+public:
+    vector<int> nextGreaterElement(vector<int>& findNums, vector<int>& nums) {
+        unordered_map<int,int> ht;
+        stack<int> stk;
+        for(int i=0;i<nums.size();i++) {
+            while(!stk.empty() && nums[stk.top()]<nums[i]) { 
+                ht[nums[stk.top()]]=nums[i];
+                stk.pop();
+            }
+            stk.push(i);
+        }
+        int n = findNums.size();
+        vector<int> res(n);
+        for(int i=0;i<n;i++) {
+            auto it = ht.find(findNums[i]);
+            res[i]=it==ht.end()?-1:it->second;
+        }
+        return res;
+    }
+};
 ```
