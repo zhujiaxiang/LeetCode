@@ -605,3 +605,74 @@ vector<int> findDisappearedNumbers(vector<int>& nums) {
     return res;
 }
 ```
+### 520. Detect Capital
+Given a word, you need to judge whether the usage of capitals in it is right or not.
+
+We define the usage of capitals in a word to be right when one of the following cases holds:
+
+All letters in this word are capitals, like "USA".
+All letters in this word are not capitals, like "leetcode".
+Only the first letter in this word is capital if it has more than one letter, like "Google".
+Otherwise, we define that this word doesn't use capitals in a right way.
+
+#### Example 1:
+
+```
+Input: "USA"
+Output: True
+```
+
+#### Example 2:
+
+```
+Input: "FlaG"
+Output: False
+```
+
+#### Note: 
+The input will be a non-empty word consisting of uppercase and lowercase latin letters.
+#### 问题
+看string是否符合标准大写规则
+#### 思路
+分支判断
+#### C++
+
+```
+bool detectCapitalUse(string word) {
+    char c = word[0];
+    if (!isupper(c)) {
+        for (auto a:word) {
+            if (isupper(a)) {
+                return false;
+            }
+        }
+    }else{
+        if (isupper(word[1])) {
+            for (auto a:word) {
+                if (islower(a)) {
+                    return false;
+                }
+            }
+
+        }else{
+            for(int i = 2;i<word.length();i++){
+                if (isupper(word[i])) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+```
+#### 别人写法
+
+```
+ public boolean detectCapitalUse(String word) {
+        int cnt = 0;
+        for(char c: word.toCharArray()) if('Z' - c >= 0) cnt++;
+        return ((cnt==0 || cnt==word.length()) || (cnt==1 && 'Z' - word.charAt(0)>=0));
+    }
+```
+#### 收获
+通过ASC码判断，大写字母的ASC码比小写字母小。
