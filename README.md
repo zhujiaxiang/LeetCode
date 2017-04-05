@@ -1,5 +1,4 @@
 # LeetCode
-
 ### 461. Hamming Distance
 The Hamming distance between two integers is the number of positions at which the corresponding bits are different.
 
@@ -373,6 +372,7 @@ vector<int> nextGreaterElement(vector<int>& findNums, vector<int>& nums) {
 }
 ```
 ### 别人写法
+通过建立一个键值对，预先保存nums中每个数的nextGreaterElement，随后对其进行查找。
 
 ```
 class Solution {
@@ -400,26 +400,208 @@ public:
 	}
 };
 
+```
+### 463. Island Perimeter
+You are given a map in form of a two-dimensional integer grid where 1 represents land and 0 represents water. Grid cells are connected horizontally/vertically (not diagonally). The grid is completely surrounded by water, and there is exactly one island (i.e., one or more connected land cells). The island doesn't have "lakes" (water inside that isn't connected to the water around the island). One cell is a square with side length 1. The grid is rectangular, width and height don't exceed 100. Determine the perimeter of the island.
+#### Example:
 
-class Solution {
-public:
-    vector<int> nextGreaterElement(vector<int>& findNums, vector<int>& nums) {
-        unordered_map<int,int> ht;
-        stack<int> stk;
-        for(int i=0;i<nums.size();i++) {
-            while(!stk.empty() && nums[stk.top()]<nums[i]) { 
-                ht[nums[stk.top()]]=nums[i];
-                stk.pop();
+```
+[[0,1,0,0],
+ [1,1,1,0],
+ [0,1,0,0],
+ [1,1,0,0]]
+
+Answer: 16
+Explanation: The perimeter is the 16 yellow stripes in the image below:
+
+```
+![image](https://leetcode.com/static/images/problemset/island.png)
+#### 问题
+0是海1是岛，求岛的边界
+#### 思路
+从非边缘行，列开始遍历，遍历到1，count++，检查其左上两个是否也为一，若为1记录为一个repeat，
+#### C++
+
+```
+int islandPerimeter(vector<vector<int>>& grid) {
+    int count = 0;
+    int repeat = 0;
+    for (int i=0; i<grid.size(); i++) {
+        for (int j=0; j<grid[i].size(); j++) {
+            if (grid[i][j] == 1) {
+                count ++;
+                if (j!=0 && grid[i][j-1] == 1) {
+                    repeat ++;
+                }
+                if (i!=0 && grid[i-1][j] == 1) {
+                    repeat ++;
+                }
             }
-            stk.push(i);
         }
-        int n = findNums.size();
-        vector<int> res(n);
-        for(int i=0;i<n;i++) {
-            auto it = ht.find(findNums[i]);
-            res[i]=it==ht.end()?-1:it->second;
-        }
-        return res;
     }
-};
+    
+    return count * 4 -repeat;
+}
+
+```
+
+#### 收获
+遍历二维vector的方法
+
+```
+for (int i=0; i<grid.size(); i++) 
+{
+        for (int j=0; j<grid[i].size(); j++) 
+        {
+        }
+}
+```
+### 292. Nim Game
+You are playing the following Nim Game with your friend: There is a heap of stones on the table, each time one of you take turns to remove 1 to 3 stones. The one who removes the last stone will be the winner. You will take the first turn to remove the stones.
+
+Both of you are very clever and have optimal strategies for the game. Write a function to determine whether you can win the game given the number of stones in the heap.
+
+For example, if there are 4 stones in the heap, then you will never win the game: no matter 1, 2, or 3 stones you remove, the last stone will always be removed by your friend.
+#### Hint:
+If there are 5 stones in the heap, could you figure out a way to remove the stones such that you will always be the winner?
+#### 问题
+取石头 一个人能取1，2，3块石头，如果你是先手，判断是否能赢
+#### 思路
+是4的倍数必输
+#### C++
+
+```
+bool canWinNim(int n) {
+        return (n &0B11) != 0;
+    }
+```
+#### 收获
+
+```
+(n % 4) != 0 
+(n &0B11) != 0;
+```
+### 485. Max Consecutive Ones
+Given a binary array, find the maximum number of consecutive 1s in this array.
+#### Example 1:
+
+```
+Input: [1,1,0,1,1,1]
+Output: 3
+Explanation: The first two digits or the last three digits are consecutive 1s.
+    The maximum number of consecutive 1s is 3.
+```
+#### Note:
+The input array will only contain 0 and 1.
+
+The length of input array is a positive integer and will not exceed 10,000
+#### 问题
+求最长的连续1的数量
+#### 思路
+做一个mark数组标记0的位置，再进行处理
+#### C++
+
+```
+ int findMaxConsecutiveOnes(vector<int>& nums) {
+    vector<int> mark;
+    int count = 0;
+    mark.push_back(-1);
+    for(int i=0;i<nums.size();i++){
+        if (nums[i] == 0) {
+            mark.push_back(i);
+            count ++;
+        }
+    }
+    if(count == 0){
+        return (int)nums.size();
+    }
+    mark.push_back(nums.size());
+    int max = 0;
+    for (int j=1; j<mark.size(); j++) {
+        if (mark[j]-mark[j-1] -1 >max) {
+            max = mark[j]-mark[j-1]-1;
+        }
+    }
+    return max;
+        }
+```
+
+#### 别人写法
+
+```
+int findMaxConsecutiveOnes(vector<int>& nums) {
+int max=0,cur=0;
+for(int i=0;i<nums.size();i++)
+{
+if(nums[i]&1)
+{
+max=max>++cur?max:cur;
+}
+else cur=0;
+}
+return max;
+}
+```
+
+#### 收获
+别想太复杂
+### 136. Single Number
+Given an array of integers, every element appears twice except for one. Find that single one.
+
+#### Note:
+Your algorithm should have a linear runtime complexity. Could you implement it without using extra memory?
+
+#### 问题
+求一个数组中的单个数字，要求线性时间复杂度，无额外空间
+#### 思路
+异或为0
+#### C++
+
+```
+int singleNumber(vector<int>& nums) {
+            for(int i=1;i<nums.size();i++)
+    {
+        nums[0]=nums[0]^nums[i];
+    }
+    return nums[0];
+    }
+```
+
+#### 收获
+多关注位运算，异或，与，非，反
+
+### 448. Find All Numbers Disappeared in an Array
+Given an array of integers where 1 ≤ a[i] ≤ n (n = size of array), some elements appear twice and others appear once.
+
+Find all the elements of [1, n] inclusive that do not appear in this array.
+
+Could you do it without extra space and in O(n) runtime? You may assume the returned list does not count as extra space.
+#### Example:
+
+```
+Input:
+[4,3,2,7,8,2,3,1]
+
+Output:
+[5,6]
+```
+#### 问题
+寻找数组中消失的数字
+#### 思路
+把数字放到该放的地方，然后找出消失的数字
+#### C++
+
+```
+vector<int> findDisappearedNumbers(vector<int>& nums) {
+    int len = (int)nums.size();
+    for (int i=0; i<len; i++) {
+        int m = abs(nums[i])-1;
+        nums[m]= nums[m]>0?-nums[m]:nums[m];
+    }
+    vector<int> res;
+    for (int i=0; i<len; i++) {
+        if(nums[i] > 0) res.push_back(i+1);
+    }
+    return res;
+}
 ```
