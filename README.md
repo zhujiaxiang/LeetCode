@@ -676,3 +676,582 @@ bool detectCapitalUse(string word) {
 ```
 #### 收获
 通过ASC码判断，大写字母的ASC码比小写字母小。
+### 104. Maximum Depth of Binary Tree
+#### 问题
+求树的最大深度
+#### 思路
+深度优先||广度优先
+#### C++
+
+```
+深度优先
+int maxDepth(TreeNode* root) {
+    return root == NULL ? 0 :max(maxDepth(root->left), maxDepth(root->right))+1;
+}
+广度优先
+int maxDepth(TreeNode *root)
+{
+    if(root == NULL)
+        return 0;
+    
+    int res = 0;
+    queue<TreeNode *> q;
+    q.push(root);
+    while(!q.empty())
+    {
+        ++ res;
+        for(int i = 0, n = q.size(); i < n; ++ i)
+        {
+            TreeNode *p = q.front();
+            q.pop();
+            
+            if(p -> left != NULL)
+                q.push(p -> left);
+            if(p -> right != NULL)
+                q.push(p -> right);
+        }
+    }
+    
+    return res;
+}
+```
+### 389. Find the Difference
+#### 问题
+寻找两个字符串不同的字符
+#### 思路
+位运算 异或能找出单个不同的字符
+#### C++
+
+```
+char findTheDifference(string s, string t) {
+
+    char res = '\0';
+    for (char a:s) {
+        res = res^a;
+    }
+    
+    for (char b:t) {
+        res = res^b;
+    }
+    cout<<res;
+    
+    return res;
+}
+```
+
+#### 收获
+异或找不同
+### 371. Sum of Two Integers
+Calculate the sum of two integers a and b, but you are not allowed to use the operator + and -.
+
+#### Example:
+Given a = 1 and b = 2, return 3.
+
+#### 问题
+在不使用+ -的情况下 实现加法
+#### 思路
+通过异或来实现0+1或1+0，通过与并左移实现进位
+#### C++
+
+```
+int getSum(int a, int b) {
+    int sum = a;
+    while (b!=0) {
+        sum = a^b;
+        b = (a&b)<<1;
+        a = sum;
+    }
+    return sum;
+}
+```
+
+#### 收获
+可以通过异或来实现0+1或1+0，通过与+左移实现进位
+### 226. Invert Binary Tree
+
+```
+Invert a binary tree.
+
+     4
+   /   \
+  2     7
+ / \   / \
+1   3 6   9
+to
+     4
+   /   \
+  7     2
+ / \   / \
+9   6 3   1
+```
+#### 问题
+翻转二叉树
+#### 思路
+递归，非递归（广度优先）
+#### C++
+
+```
+递归
+TreeNode* invertTree(TreeNode* root) {
+              if(root == NULL)
+    {
+        return NULL;
+    }
+    
+    if (root) {
+        TreeNode *temp = root->left;
+        root->left = root->right;
+        root->right = temp;
+        
+        if(root->left !=NULL){
+            invertTree(root->left);
+        }
+        if (root->right !=NULL) {
+            invertTree(root->right);
+        }
+    }
+    
+    return root;
+    }
+非递归
+TreeNode *invertTree(TreeNode *root)
+{
+    stack<TreeNode *> stack;
+    stack.push(root);
+    while (!stack.empty()) {
+        TreeNode *p = stack.top();
+        stack.pop();
+        if (p) {
+            stack.push(root->left);
+            stack.push(root->right);
+            swap(root->left, root->right);
+        }
+    }
+    return root;
+}
+
+```
+#### 收获
+swap函数
+### 258. Add Digits
+Given a non-negative integer num, repeatedly add all its digits until the result has only one digit.
+
+#### For example:
+
+Given num = 38, the process is like: 3 + 8 = 11, 1 + 1 = 2. Since 2 has only one digit, return it.
+
+#### Follow up:
+Could you do it without any loop/recursion in O(1) runtime?
+#### 问题
+38-》3+8=11》1+1》2  一个数，各位数相加，直至只剩一位数
+#### 思路
+[数根](https://www.zhihu.com/question/30972581)
+#### C++
+
+```
+    int addDigits(int num) {
+        return 1+(num-1)%9;
+    }
+```
+
+#### 收获
+12345 % 9 = (1 + 2 + 3 + 4 +5 ) % 9 
+### 492. Construct the Rectangle
+For a web developer, it is very important to know how to design a web page's size. So, given a specific rectangular web page’s area, your job by now is to design a rectangular web page, whose length L and width W satisfy the following requirements:
+
+
+```
+1. The area of the rectangular web page you designed must equal to the given target area.
+
+2. The width W should not be larger than the length L, which means L >= W.
+
+3. The difference between length L and width W should be as small as possible.
+You need to output the length L and the width W of the web page you designed in sequence.
+```
+
+#### Example:
+
+```
+Input: 4
+Output: [2, 2]
+Explanation: The target area is 4, and all the possible ways to construct it are [1,4], [2,2], [4,1]. 
+But according to requirement 2, [1,4] is illegal; according to requirement 3,  [4,1] is not optimal compared to [2,2]. So the length L is 2, and the width W is 2.
+```
+
+#### Note:
+The given area won't exceed 10,000,000 and is a positive integer
+The web page's width and length you designed must be positive integers
+#### 问题
+给定一个正方形面积，求出符合要求的一组长款
+#### 收获
+时间复杂度，的优化
+#### C++
+
+```
+写法1：99ms
+vector<int> constructRectangle(int area) {
+    
+    int l = sqrt(area);
+    for(int i = l;i<=area;i++)
+    {
+        if (area%i==0) {
+            l=i;
+            break;
+        }
+    }
+    int w = area/l;
+    
+    if(w>l){
+        swap(w,l);
+    }
+    vector<int> result = {l,w};
+    
+    return result;
+}
+更新写法2：3ms
+vector<int> constructRectangle(int area) {
+    
+    int w ;
+    for(int i = 1;i*i<=area;i++)
+    {
+        if (area%i==0) {
+            w=i;
+
+        }
+    }
+
+    vector<int> result = {area/w,w};
+    
+    return result;
+}
+```
+#### 收获
+不用系统函数，想办法替代
+### 283. Move Zeroes
+Given an array nums, write a function to move all 0's to the end of it while maintaining the relative order of the non-zero elements.
+
+For example, given nums = [0, 1, 0, 3, 12], after calling your function, nums should be [1, 3, 12, 0, 0].
+
+#### Note:
+You must do this in-place without making a copy of the array.
+Minimize the total number of operations.
+#### 问题
+将数组中的0移动到数组末尾
+#### 思路
+遇到非0就覆盖原数组，最后再将0添上
+#### C++
+
+```
+void moveZeroes(vector<int>& nums) {
+    int j = 0;
+    for (int i=0; i<nums.size(); i++) {
+        if (nums[i]!=0) {
+            nums[j++]=nums[i];
+        }
+    }
+    
+    for (; j<nums.size(); j++) {
+        nums[j] = 0;
+    }
+}
+```
+### 506. Relative Ranks
+Given scores of N athletes, find their relative ranks and the people with the top three highest scores, who will be awarded medals: "Gold Medal", "Silver Medal" and "Bronze Medal".
+
+#### Example 1:
+
+```
+Input: [5, 4, 3, 2, 1]
+Output: ["Gold Medal", "Silver Medal", "Bronze Medal", "4", "5"]
+Explanation: The first three athletes got the top three highest scores, so they got "Gold Medal", "Silver Medal" and "Bronze Medal". 
+For the left two athletes, you just need to output their relative ranks according to their scores.
+```
+
+#### Note:
+N is a positive integer and won't exceed 10,000.
+All the scores of athletes are guaranteed to be unique.
+#### 问题
+根据数组中的得，输出其对应的排名    
+#### 思路
+利用C++ map的递增特性，进行输出
+#### C++
+
+```
+vector<string> findRelativeRanks(vector<int>& nums) {
+
+    map<int,int> mp;
+    
+    for (int i=0; i<nums.size(); i++) {
+        mp[nums[i]]=i;
+    }
+    
+    vector<string> res(nums.size(),"");
+    int cnt = 0;
+    for (map<int,int>::reverse_iterator it = mp.rbegin(); it!=mp.rend(); it++,cnt++) {
+        if (cnt== 0) {
+            res[it->second] = "Gold Medal";
+        }else if (cnt==1){
+            res[it->second] = "Silver Medal";
+        }else if (cnt==2){
+            res[it->second] = "Bronze Medal";
+        }else{
+            res[it->second] = to_string(cnt+1);
+        }
+    }
+    
+    return res;
+}
+```
+#### 收获
+C++ map是递增的，it—>first是key it->second是value，倒序遍历迭代器的方法
+
+```
+for(map<int,int>::reverse_iterator it=mp.rbegin();it!+mp.rend();it++)
+```
+### 530. Minimum Absolute Difference in BST
+Given a binary search tree with non-negative values, find the minimum absolute difference between values of any two nodes.
+
+#### Example:
+
+
+```
+Input:
+
+   1
+    \
+     3
+    /
+   2
+
+Output:
+1
+```
+
+
+#### Explanation:
+The minimum absolute difference is 1, which is the difference between 2 and 1 (or between 2 and 3).
+Note: There are at least two nodes in this BST.
+#### 问题
+求二叉搜索树中，求两个结点绝对值相差最小的值
+#### 思路
+中序遍历出的二叉搜索树是有序递增的，在这个有序的队列中求最小值
+#### C++
+
+```
+ public:void inorderTraverse(TreeNode* root, int& val, int& min_dif) {
+    if (root->left != NULL) inorderTraverse(root->left, val, min_dif);
+    if (val >= 0) min_dif = min(min_dif, root->val - val);
+    val = root->val;
+    if (root->right != NULL) inorderTraverse(root->right, val, min_dif);
+}
+public:int getMinimumDifference(TreeNode* root) {
+    auto min_dif = INT_MAX, val = -1;
+    inorderTraverse(root, val, min_dif);
+    return min_dif;
+}
+```
+
+#### 收获
+中序遍历二叉搜索树是有序的
+
+### 167. Two Sum II - Input array is sorted
+Given an array of integers that is already sorted in ascending order, find two numbers such that they add up to a specific target number.
+
+The function twoSum should return indices of the two numbers such that they add up to the target, where index1 must be less than index2. Please note that your returned answers (both index1 and index2) are not zero-based.
+
+You may assume that each input would have exactly one solution and you may not use the same element twice.
+
+#### Input:
+numbers={2, 7, 11, 15}, target=9
+#### Output:
+index1=1, index2=2
+#### 问题
+给一个数组，给一个目标，找出相加为目标数的两个数在数组中的位置
+#### 描述
+一左一右两个指针， while
+#### C++
+
+```
+ vector<int> twoSum(vector<int>& numbers, int target) {
+    
+    int r = (int)numbers.size() - 1;
+    
+    int l = 0;
+    
+    while (l<r) {
+        if (numbers[l] + numbers[r] == target) {
+          vector<int> res{l+1,r+1};
+            return res;
+        }else if(numbers[l] + numbers[r] > target){
+            r--;
+        }else if(numbers[l] + numbers[r] < target){
+            l++;
+        }
+    }
+    
+    vector<int> fail;
+    return fail;
+}
+```
+### 521. Longest Uncommon Subsequence I
+Given a group of two strings, you need to find the longest uncommon subsequence of this group of two strings. The longest uncommon subsequence is defined as the longest subsequence of one of these strings and this subsequence should not be any subsequence of the other strings.
+
+A subsequence is a sequence that can be derived from one sequence by deleting some characters without changing the order of the remaining elements. Trivially, any string is a subsequence of itself and an empty string is a subsequence of any string.
+
+The input will be two strings, and the output needs to be the length of the longest uncommon subsequence. If the longest uncommon subsequence doesn't exist, return -1.
+
+#### Example 1:
+
+```
+Input: "aba", "cdc"
+Output: 3
+Explanation: The longest uncommon subsequence is "aba" (or "cdc"), 
+because "aba" is a subsequence of "aba", 
+but not a subsequence of any other strings in the group of two strings.
+```
+
+#### Note:
+
+Both strings' lengths will not exceed 100.
+Only letters from a ~ z will appear in input strings.
+#### 问题
+两个字符串中最长的字符串是否是第二个字符串的子串，如果是则返回-1，否做返回其长度
+#### C++
+
+```
+int findLUSlength(string a, string b) {
+    
+    if (a.size() == b.size()) {
+        if (a==b) {
+            return -1;
+        }else{
+            return (int)a.size();
+        }
+    }else{
+        return (int)max(a.size(), b.size());
+    }
+}
+```
+### 455. Assign Cookies
+Assume you are an awesome parent and want to give your children some cookies. But, you should give each child at most one cookie. Each child i has a greed factor gi, which is the minimum size of a cookie that the child will be content with; and each cookie j has a size sj. If sj >= gi, we can assign the cookie j to the child i, and the child i will be content. Your goal is to maximize the number of your content children and output the maximum number.
+
+#### Note:
+You may assume the greed factor is always positive. 
+You cannot assign more than one cookie to one child.
+
+#### Example 1:
+
+```
+Input: [1,2,3], [1,1]
+
+Output: 1
+
+Explanation: You have 3 children and 2 cookies. The greed factors of 3 children are 1, 2, 3. 
+And even though you have 2 cookies, since their size is both 1, you could only make the child whose greed factor is 1 content.
+You need to output 1.
+```
+
+#### Example 2:
+
+```
+Input: [1,2], [1,2,3]
+
+Output: 2
+
+
+Explanation: You have 2 children and 3 cookies. The greed factors of 2 children are 1, 2. 
+You have 3 cookies and their sizes are big enough to gratify all of the children, 
+You need to output 2.
+```
+#### 问题
+给小孩分曲奇，两个数组
+第一个是小孩的需求数组【1，2，3】，代表有3个小孩，分别要1，2，3大小的曲奇
+第二个是自己拥有的曲奇数组【1，2】代表有2个曲奇，大小分别为1，2
+#### 思路 
+贪心算法，先对两个数组进行递增排序，随后开始比较，作一个关于饼干数组的循环，如果遇到合适的小孩，则分配给他，然后对下一个下小孩进行分析
+
+#### C++
+
+```
+int findContentChildren(vector<int>& g, vector<int>& s) {
+    sort(g.begin(),g.end());
+    sort(s.begin(), s.end());
+    
+    int i=0,j=0;
+    
+    for (; i < g.size()&& j < s.size(); j++) {
+        if (g[i]<=s[j]) {
+            i++;
+        }
+    }
+    
+    return i;
+};
+```
+
+#### 收获
+贪心算法，sort函数
+
+### 453. Minimum Moves to Equal Array Elements
+Given a non-empty integer array of size n, find the minimum number of moves required to make all array elements equal, where a move is incrementing n - 1 elements by 1.
+
+#### Example:
+
+
+```
+Input:
+[1,2,3]
+
+Output:
+3
+```
+
+
+#### Explanation:
+Only three moves are needed (remember each move increments two elements):
+
+
+```
+[1,2,3]  =>  [2,3,3]  =>  [3,4,3]  =>  [4,4,4]
+```
+
+#### 问题
+给一组n个数，每次只能进行n-1个数的+1操作，问将他们都变为相同的数字最少需要几步。
+#### 思路
+（min+k）*n = sum+k*(n-1)
+k = sum - min*n
+
+#### C++
+
+```
+int minMoves(vector<int>& nums) {
+    
+    if (nums.size()<=1) {
+        return 0;
+    }else{
+        int sum=0,minimum=INT_MAX;
+        for (int i=0; i<nums.size(); i++) {
+            sum += nums[i];
+            minimum = min(minimum,nums[i]);
+        }
+        int res = sum-(int)(minimum*nums.size());
+        return res;
+    }
+}
+```
+
+#### 别人写法
+
+```
+int minMoves(vector<int>& nums) {
+    return accumulate(begin(nums), end(nums), 0L) - nums.size() * *min_element(begin(nums), end(nums));
+}
+```
+
+#### 收获
+列出等式，找规律 
+
+```
+#include <numeric>
+int sum = accumulate(begin(nums), end(nums), 0);
+```
