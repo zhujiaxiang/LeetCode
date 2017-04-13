@@ -1254,4 +1254,439 @@ int minMoves(vector<int>& nums) {
 ```
 #include <numeric>
 int sum = accumulate(begin(nums), end(nums), 0);
+min_element(begin(nums), end(nums));
+
+```
+### 383. Ransom Note
+Given an arbitrary ransom note string and another string containing letters from all the magazines, write a function that will return true if the ransom note can be constructed from the magazines ; otherwise, it will return false.
+
+Each letter in the magazine string can only be used once in your ransom note.
+
+#### Note:
+You may assume that both strings contain only lowercase letters.
+
+canConstruct("a", "b") -> false
+canConstruct("aa", "ab") -> false
+canConstruct("aa", "aab") -> true
+
+#### 问题
+给两个数组，如果能用第二个数组中的元素构成第一个数组，则返回true
+#### 思路
+对数组2的每一个字母进行计数+1，计数完后再对数组1对应进行计数-1，如果有数计数<0，则返回false，否则则返回true
+#### C++
+
+```
+bool canConstruct(string ransomNote, string magazine) {
+    vector<int> vec(26,0);
+    
+    for (int i=0; i<magazine.size(); i++) {
+        ++vec[magazine[i]-'a'];
+    }
+    
+    for (int j=0; j<ransomNote.size(); j++) {
+        if (--vec[ransomNote[j]-'a']<0) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+```
+
+#### 收获
+一种比较的思路
+
+### 349. Intersection of Two Arrays    
+Given two arrays, write a function to compute their intersection.
+
+#### Example:
+Given nums1 = [1, 2, 2, 1], nums2 = [2, 2], return [2].
+
+#### Note:
+Each element in the result must be unique.
+The result can be in any order.
+Subscribe to see which companies asked this question.
+#### 问题
+给2个数组，找出共同的元素
+#### 思路
+比较，去除重复元素 使用unique
+#### C++
+
+```
+vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+    if(nums1.size()<=0||nums2.size()<=0)
+    {
+        return vector<int>{};
+    }
+    vector<int> res;
+    sort(nums1.begin(),nums1.end());
+    sort(nums2.begin(),nums2.end());
+    int i=0,j=0;
+    for (; i<nums1.size()&&j<nums2.size(); j++) {
+        if (nums1[i]==nums2[j]) {
+            res.push_back(nums1[i]);
+            i++;
+        }else if (nums1[i]<nums2[j]){
+            i++;
+            j--;
+        }
+    }
+    vector<int>::iterator new_end;
+    new_end=unique(res.begin(),res.end());
+    res.erase(new_end, res.end());
+    return res;
+}
+```
+
+#### 收获
+
+```
+去除重复元素
+
+new_end=unique(res.begin(),res.end());
+res.erase(new_end, res.end());
+```
+
+### 404. Sum of Left Leaves   
+Find the sum of all left leaves in a given binary tree.
+
+#### Example:
+
+```
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+
+There are two left leaves in the binary tree, with values 9 and 15 respectively. Return 24.
+#### 问题
+统计一棵树的左叶子和
+#### 思路
+递归
+#### C++
+
+```
+int sumOfLeftLeaves(TreeNode* root) {
+    
+    if(!root){
+        return 0;
+    }
+
+    
+    if (root->left && !root->left->left && !root->left->right) {
+        return root->left->val + sumOfLeftLeaves(root->right);
+    }
+    
+    return sumOfLeftLeaves(root->left) + sumOfLeftLeaves(root->right);
+}
+```
+
+#### 收获
+从最小的一部分观察，制定递归策略
+
+### 122. Best Time to Buy and Sell Stock II   
+Say you have an array for which the ith element is the price of a given stock on day i.
+
+Design an algorithm to find the maximum profit. You may complete as many transactions as you like (ie, buy one and sell one share of the stock multiple times). However, you may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
+#### 问题
+给一个数组，数组i代表天数，a[i-1]代表当天股票价值，问怎么样才能获取最大值？
+#### 思路
+累加差值，如果遇到下跌的天数就跳过
+#### C++
+
+```
+int maxProfit(vector<int> &prices)
+{
+    if (prices.size() == 0) {
+        return 0;
+    }
+    int maximum = 0;
+
+    for (int i = 0; i < prices.size()-1; i++) {
+       
+        if (prices[i] < prices[i+1]) {
+            maximum = maximum + prices[i+1]-prices[i];
+        }
+    }
+
+    return maximum;
+}
+```
+#### 别人的写法
+
+```
+int maxProfit(vector<int> &prices) {
+    int ret = 0;
+    for (size_t p = 1; p < prices.size(); ++p) 
+      ret += max(prices[p] - prices[p - 1], 0);    
+    return ret;
+}   
+```
+#### 收获
+
+```
+if (prices[i] < prices[i+1]) 
+{
+     maximum = maximum + prices[i+1]-prices[i];
+}
+        
+ ret += max(prices[p] - prices[p - 1], 0);
+```
+### 387. First Unique Character in a String
+Given a string, find the first non-repeating character in it and return it's index. If it doesn't exist, return -1.
+
+#### Examples:
+```
+s = "leetcode"
+return 0.
+
+s = "loveleetcode",
+return 2.
+```
+#### 问题
+求string中第一个不重复的字符的下标
+#### 思路
+使用map将string按字符一个个存入map，并count
+#### C++
+
+```
+int firstUniqChar(string s) {
+    unordered_map<char, int> map;
+    
+    for(auto c:s)
+    {
+        map[c]++;
+    }
+    
+    for (int i = 0; i< s.size(); i++) {
+        if(map[s[i]] - 1 ==0)
+        {
+            return i;
+        }
+        
+    }
+    return -1;
+}
+```
+#### 收获
+多用键值对，通过
+
+```
+for (int i = 0; i< s.size(); i++) {
+        if(map[s[i]] - 1 ==0)
+        {
+            return i;
+        }
+        
+    }
+```
+能实现按顺序查找第一个不重复的字符。
+
+### 122. Best Time to Buy and Sell Stock II
+Say you have an array for which the ith element is the price of a given stock on day i.
+
+Design an algorithm to find the maximum profit. You may complete as many transactions as you like (ie, buy one and sell one share of the stock multiple times). However, you may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
+#### 问题
+给定一个数组 下标为天数，各个元素为当天股票价格，球可获利的最大值
+#### 思路
+累加
+#### C++
+
+```
+int maxProfit(vector<int> &prices) {
+    int ret = 0;
+    for (size_t p = 1; p < prices.size(); ++p) 
+      ret += max(prices[p] - prices[p - 1], 0);    
+    return ret;
+}
+```
+
+### 171. Excel Sheet Column Number
+
+Given a column title as appear in an Excel sheet, return its corresponding column number.
+
+#### For example:
+
+
+```
+    A -> 1
+    B -> 2
+    C -> 3
+    ...
+    Z -> 26
+    AA -> 27
+    AB -> 28
+```
+
+#### 问题
+类似于Excel的列标题，求其代表的数字
+#### 思路
+按位数分析累加
+#### C++
+
+```
+int titleToNumber(string s) {
+    
+    int res = 0;
+    
+    for (int i = 0; i < s.size(); res = res*26 + s[i] - 'A' + 1 , i++ ) ;
+    
+    return res;
+}
+```
+
+
+### 237. Delete Node in a Linked Lis
+Write a function to delete a node (except the tail) in a singly linked list, given only access to that node.
+
+Supposed the linked list is 1 -> 2 -> 3 -> 4 and you are given the third node with value 3, the linked list should become 1 -> 2 -> 4 after calling your function.
+#### 问题
+删除节点
+#### 思路
+用被删除结点之后的结点替换被删除结点
+#### C++
+
+```
+    void deleteNode(ListNode* node) {
+        *node = *node -> next;
+    }
+```
+
+### 100. Same Tree
+Given two binary trees, write a function to check if they are equal or not.
+
+Two binary trees are considered equal if they are structurally identical and the nodes have the same value.
+#### 问题
+判断两棵树是否相等
+#### 思路
+递归判断
+#### C++
+
+```
+bool isSameTree(TreeNode* p, TreeNode* q) {
+    
+    if (p == NULL || q == NULL) {
+        return p==q;
+    }
+    
+    return (p->val == q->val && isSameTree(p->left, q->left) && isSameTree(p->right, q->right));
+}
+```
+
+
+### 169. Majority Element
+Given an array of size n, find the majority element. The majority element is the element that appears more than ⌊ n/2 ⌋ times.
+
+You may assume that the array is non-empty and the majority element always exist in the array
+#### 问题
+求一个数组中，出现次数超过一半的字符
+#### 思路
+排序后，出现次数超过一半的字符肯定在中间
+#### C++
+
+```
+public:
+int majorityElement(vector<int>& nums) {
+    
+    unordered_map<int, int> cnt;
+    
+    for (int i = 0; i < nums.size(); i++) {
+        cnt[nums[i]]++;
+    }
+    
+    for (int i=0; i<nums.size(); i++) {
+        if(cnt[nums[i]] > nums.size()/2){
+            return nums[i];
+        }
+    }
+    return 0;
+}
+```
+#### 别人的写法
+
+```
+    int majorityElement(vector<int>& nums) {
+        nth_element(nums.begin(), nums.begin() + nums.size() / 2, nums.end());
+        return nums[nums.size() / 2];
+    } 
+```
+
+### 242. Valid Anagram
+Given two strings s and t, write a function to determine if t is an anagram of s.
+
+#### For example,
+s = "anagram", t = "nagaram", return true.
+s = "rat", t = "car", return false.
+
+#### Note:
+You may assume the string contains only lowercase alphabets.
+
+#### Follow up:
+What if the inputs contain unicode characters? How would you adapt your solution to such case?
+#### 问题
+两个数组，问他们是否重新组合后是否为同一个单词
+#### 思路
+对第二个数组中的字母一一计数，随后再对第一个数组中的字母一一扣除，如果为负，则false
+#### C++
+
+```
+bool isAnagram(string s, string t) {
+    vector<int> count(26,0);
+    
+       if (s.size() != t.size()) {
+        return false;
+    }
+    
+    for (int i=0; i<s.size(); i++) {
+        ++count[s[i]-'a'];
+    }
+    
+    for (int j=0; j<t.size(); j++) {
+        if (--count[t[j]-'a']<0) {
+            return false;
+        }
+    }
+    
+    return true;
+    
+}
+```
+### 504. Base 7
+Given an integer, return its base 7 string representation.
+
+
+```
+Example 1:
+Input: 100
+Output: "202"
+Example 2:
+Input: -7
+Output: "-10"
+Note: The input will be in range of [-1e7, 1e7].
+```
+
+#### 问题
+给一个数，转化为7进制数
+#### 思路
+递除取余
+#### C++
+
+```
+string convertToBase7(int num) {
+    int i = 0;
+    int n = num;
+    string res = "";
+
+    num = abs(num);
+    do {
+        res.insert(i,to_string(num%7));
+        num = num/7;
+    } while (num != 0);
+    
+    
+    
+    return (n >=0?"":"-") + res;
+}
 ```
