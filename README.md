@@ -1690,3 +1690,185 @@ string convertToBase7(int num) {
     return (n >=0?"":"-") + res;
 }
 ```
+### 409. Longest Palindrome
+Given a string which consists of lowercase or uppercase letters, find the length of the longest palindromes that can be built with those letters.
+
+This is case sensitive, for example "Aa" is not considered a palindrome here.
+
+#### Note:
+Assume the length of given string will not exceed 1,010.
+
+#### Example:
+
+
+```
+Input:
+"abccccdd"
+
+Output:
+7
+
+Explanation:
+One longest palindrome that can be built is "dccaccd", whose length is 7.
+```
+
+#### 问题
+求能组成的最长回文子串的长度
+#### 思路
+统计所有偶数长度的字符并相加，统计所有奇数长度的字符并减一相加，只保留一个奇数不减一
+#### C++
+
+```
+int longestPalindrome(string s) {
+    vector<int> m(256,0);
+    int cnt = 0;
+    for (auto i : s) {
+        m[i-'\0']++;
+    }
+    for (auto j : m) {
+        cnt += j % 2 ? (cnt % 2 ? j-1 : j) :  j;
+    }
+    return cnt;
+}
+```
+
+
+### 217. Contains Duplicate
+Given an array of integers, find if the array contains any duplicates. Your function should return true if any value appears at least twice in the array, and it should return false if every element is distinct.
+#### 问题
+给一个数字数组，如果有重复的则返回true
+#### 思路
+统计，遇到超过1的返回
+#### C++
+
+```
+bool containsDuplicate(vector<int>& nums) {
+    unordered_map<int, int> map;
+    
+    if (nums.size()==0) {
+        return false;
+    }
+    
+    for (int i: nums) {
+        if(++map[i]>1){
+            return true;
+        }
+    }
+    
+    return false;
+}
+```
+
+### 13. Roman to Integer
+Given a roman numeral, convert it to an integer.
+
+Input is guaranteed to be within the range from 1 to 3999.
+#### 问题
+转化罗马数字
+#### 思路
+做一个字典，分小紧随大，大紧随小 两种罗马字符减加情况
+#### C++
+
+```
+public:
+    int romanToInt(string s)
+{
+    unordered_map<char, int> map{{'I', 1},
+                                 {'V', 5},
+                                 {'X', 10},
+                                 {'L', 50},
+                                 {'C', 100},
+                                 {'D', 500},
+                                 {'M', 1000}};
+    
+    int res = 0;
+    
+    for (int i = 0; i < s.size(); i++) {
+        if (map[s[i]]<map[s[i+1]]) {
+            res -= map[s[i]];
+        }else{
+            res += map[s[i]];
+        }
+    }
+    return res;
+    
+}
+```
+
+### 401. Binary Watch
+A binary watch has 4 LEDs on the top which represent the hours (0-11), and the 6 LEDs on the bottom represent the minutes (0-59).
+
+Each LED represents a zero or one, with the least significant bit on the right.
+
+![image](https://upload.wikimedia.org/wikipedia/commons/8/8b/Binary_clock_samui_moon.jpg)
+For example, the above binary watch reads "3:25".
+
+Given a non-negative integer n which represents the number of LEDs that are currently on, return all possible times the watch could represent.
+
+Example:
+
+
+```
+Input: n = 1
+Return: ["1:00", "2:00", "4:00", "8:00", "0:01", "0:02", "0:04", "0:08", "0:16", "0:32"]
+Note:
+The order of output does not matter.
+The hour must not contain a leading zero, for example "01:00" is not valid, it should be "1:00".
+The minute must be consist of two digits and may contain a leading zero, for example "10:2" is not valid, it should be "10:02".
+```
+
+#### 问题
+二进制手表，当亮点个数为n时，给出所有时间组合
+#### 思路
+二进制表示各时间，符合count则添加进返回vector
+#### C++
+
+```
+vector<string> readBinaryWatch(int num) {
+    vector<string> res;
+    for(int h = 0; h < 12;h++)
+        for(int m = 0; m < 60;m++){
+            if (bitset<10>(h<<6|m).count() == num) {
+                res.emplace_back(to_string(h) + (m<10?":0":":")  + to_string(m));
+            }
+        }
+    return res;
+}
+```
+
+#### 收获
+bitset<10>
+
+emplace_back 比 push_back 更高效
+### 206. Reverse Linked List
+#### 问题 
+翻转链表
+#### 思路
+设立一个pre指针，一个next指针，进行翻转
+#### C++
+
+```
+ListNode* reverseList(ListNode* head) {
+    
+
+    ListNode *a = NULL;
+    
+
+    
+    while(head){
+        ListNode *tmp = head->next;
+        head->next = a;
+        a=head;
+        head=tmp;
+       
+    }
+    
+    return a;
+}
+```
+
+###
+#### 问题
+#### 思路
+#### C++
+#### 收获
